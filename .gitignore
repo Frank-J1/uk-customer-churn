@@ -1,0 +1,6 @@
+data/*.csv
+data/*.db
+data/*.db-journal
+data/*.dbwal
+.ipynb_checkpoints/
+__pycahce__/
