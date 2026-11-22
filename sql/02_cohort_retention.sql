@@ -29,8 +29,16 @@ WITH ranked_transactions AS(
 		ORDER BY rowid ASC
 		) AS rn
 	FROM cleaned_retail_transactions
-)
+),
+duplicates_removed AS ( 
+	SELECT 
+		customer_id,
+		year_month
+	FROM ranked_transactions
+	WHERE rn = 1 -- Selects the first row from our ranked transactions. rn is the partitions
+) 
+	
 SELECT *
-FROM ranked_transactions;
+FROM duplicates_removed;
 		
-		
+	
