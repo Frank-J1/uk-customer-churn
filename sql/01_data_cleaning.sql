@@ -30,6 +30,11 @@ cleaned AS(
 		TRIM(r.country) AS country
 	FROM raw_retail_transactions AS r
 	JOIN parts AS p ON r.rowid = p.rowid -- Join the tables on the same row ID's
+	WHERE r."Customer ID" IS NOT NULL 
+		AND TRIM(r."Customer ID") != ''
+		AND r.Quantity > 0
+  		AND r.Price > 0
+	
 )
 SELECT *
 FROM cleaned;
