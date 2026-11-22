@@ -36,9 +36,28 @@ duplicates_removed AS (
 		year_month
 	FROM ranked_transactions
 	WHERE rn = 1 -- Selects the first row from our ranked transactions. rn is the partitions
-) 
+),
+
+-- Assigns a index to the first items purchased by a customer
+customer_cohorts AS(
+	SELECT 
+		customer_id,
+		year_month,
+		MIN(year_month) OVER (PARTITION BY customer_id
+		) AS cohort_month
+	FROM duplicates_removed
+),
+--Assigns an value to how many months has passed since the FIRST customer purchase (0 indexed)
+cohort_periods AS(
+	SELECT 
+		customer_id,
+		cohort_month,
+		(CAST(STRFTIME('%Y', year_month || '-01') AS INTEGER) - (CAST(STRFTIME('%Y', cohort_month || '-01') AS INTEGER))) 
+		* 12 + (CAST(STRFTIME('%m', year_month || '-01') AS INTEGER) - (CAST(STRFTIME('%m', cohort_month || '-01') AS INTEGER))) AS cohort_index
+		FROM customer_cohorts
+	)
 	
 SELECT *
-FROM duplicates_removed;
-		
+FROM cohort_periods;
+		 
 	
