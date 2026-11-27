@@ -55,9 +55,20 @@ cohort_periods AS(
 		(CAST(STRFTIME('%Y', year_month || '-01') AS INTEGER) - (CAST(STRFTIME('%Y', cohort_month || '-01') AS INTEGER))) 
 		* 12 + (CAST(STRFTIME('%m', year_month || '-01') AS INTEGER) - (CAST(STRFTIME('%m', cohort_month || '-01') AS INTEGER))) AS cohort_index
 		FROM customer_cohorts
+),
+
+-- Assigns each of the month value from the previous CTE to a specific bucket
+cohort_counts AS(
+	SELECT
+		COUNT(customer_id) AS active_customer,
+		cohort_month,
+		cohort_index
+	FROM cohort_periods
+	GROUP BY cohort_month , cohort_index
 	)
-	
+
 SELECT *
-FROM cohort_periods;
+FROM cohort_counts;
 		 
+
 	
